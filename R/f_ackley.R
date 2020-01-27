@@ -1,15 +1,35 @@
-##' Generator for the Ackley function.
-##'
-##' @param dimensions Size of parameter space.
-##' @return A \code{soo_function}.
-##'
-##' @examples
-##' f <- ackley_function(2)
-##' plot(f, rank=TRUE)
-##' 
-##' @export
-##' @useDynLib soobench do_f_ackley
-ackley_function <- function(dimensions)
+#' Ackley test function generator
+#'
+#' Generator for the Ackley test function.
+#' The Ackley function is defined as
+#' \deqn{
+#'   f(x)
+#'   =
+#'   -20 \exp
+#'   \left(
+#'     -0.2 \sqrt{\frac{1}{n}
+#'                \sum_{i=1}^n \left(x_i^2\right)}
+#'   \right) - \exp
+#'   \left(
+#'     \frac{1}{n}\sum_{i=1}^n \cos\left(2 \pi x_i \right)
+#'   \right) + 20 + \exp(1)}{
+#' f(x) = -20 * exp(-0.2 * sqrt(1/n * sum(x^2)))
+#'        -exp(1/n * sum(cos(2 * \pi * x))) + 20 + exp(1)
+#' }
+#'
+#' @param dimensions [\code{integer(1)}] Size of parameter space.
+#' @return A \code{soo_function}.
+#'
+#' @examples
+#' f <- generate_ackley_function(2)
+#' plot(f, rank=TRUE)
+#'
+#' @references D. H. Ackley. A connectionist machine for genetic hillclimbing.
+#' Kluwer Academic Publishers, Boston, 1987
+#'
+#' @export
+#' @useDynLib soobench do_f_ackley
+generate_ackley_function <- function(dimensions)
   soo_function(name="Ackley", id=sprintf("ackley-%id", dimensions),
                dimensions=dimensions,
                fun=function(x) .Call(do_f_ackley, x),
@@ -17,6 +37,11 @@ ackley_function <- function(dimensions)
                upper_bounds=rep(32.786, dimensions),
                best_par=rep(0, dimensions),
                best_value=0)
+
+
+class(generate_ackley_function) <- c("soo_function_generator", "function")
+attr(generate_ackley_function, "id") <- "ackley"
+attr(generate_ackley_function, "name") <- "Ackley test function"
 
 ## Pure R implementation for reference purposes:
 f_ackley <- function(x) {
